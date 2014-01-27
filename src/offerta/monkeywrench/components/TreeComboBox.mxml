@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:ComboBox  xmlns:mx="http://www.adobe.com/2006/mxml" >
+
+<mx:Script>
+<![CDATA[
+
+import mx.events.FlexEvent;
+
+import mx.collections.ArrayCollection;
+
+[Bindable]
+private var _label:String;
+
+[Bindable]
+public var treeSelectedItem:Object;
+
+override protected function updateDisplayList(unscaledWidth:Number, unscaledHeight:Number):void
+{
+    super.updateDisplayList(unscaledWidth, unscaledHeight);
+    if(_label != null)
+    {
+        text = _label;
+    }
+}
+
+private var _selectedValue:int;
+
+public function get selectedValue():int
+{
+   return this._selectedValue;
+}
+
+[Bindable]
+public function set selectedValue(value:int):void
+{
+    var o:Object = findValue(value,ArrayCollection(this.dataProvider))||findValue(0,ArrayCollection(this.dataProvider));
+    if(!this.parentsSelectable&&o.children) o = findValue(this._selectedValue,ArrayCollection(this.dataProvider));
+    _label = o[this.labelField];
+    this.treeSelectedItem = o;
+    this._selectedValue = o[this._valueField];
+    this.updateDisplayList(this.unscaledWidth, this.unscaledHeight);
+    this.invalidateProperties();
+}
+
+private function findValue(value:int, coll:ArrayCollection):Object
+{
+    for each(var o:Object in coll)
+    {
+        if(o.Id == value) return o;
+        if(o.children && o.children.length>0)
+        {
+            var c:Object = findValue(value, o.children);
+            if(c!=null) return c;
+        }
+    }
+    return null;
+}
+
+private var _parentsSelectable:Boolean = true;
+
+public function get parentsSelectable():Boolean
+{
+    return _parentsSelectable;
+}
+
+public function set parentsSelectable(value:Boolean):void
+{
+    _parentsSelectable = value;
+}
+	
+private var _valueField:String = "Id";
+
+public function get valueField():String
+{
+	return _valueField;
+}
+
+public function set valueField(value:String):void
+{
+	_valueField= value;
+}
+	
+
+]]>
+</mx:Script>
+
+    <mx:dropdownFactory>
+        <mx:Component>
+            <mx:Tree change="outerDocument.selectedValue = event.target.selectedItem[outerDocument.valueField]" height="300" width="100%"/>
+        </mx:Component>
+    </mx:dropdownFactory>
+    
+</mx:ComboBox>

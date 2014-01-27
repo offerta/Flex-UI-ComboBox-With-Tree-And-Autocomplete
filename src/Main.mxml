@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:components="offerta.monkeywrench.components.*" layout="absolute" minWidth="955" minHeight="600">
+
+	<!--
+	
+	Todo:
+	- Add ability to select node using autocomplete (use a open source component if possible). 
+	- Design should look like http://www.flextras.com/Assets/ContentImages/ACCBScreen_01.gif
+	- If user selects node using autocomplete (or through tree dropdown) the selecteValue should be updated and the label 
+	  set to matching label. When matched to a node label is style with an undeline. If users edits label to activate autocomple
+	  then underline style is removed and selectedValue is set to 0. 
+	- Parents are selectable and thus only part of autocomple only if parentsSelectable=true
+	
+	-->
+	
+	<mx:Binding source="cboTree.selectedValue.toString()" destination="txtSelectedValue.text"/>
+	<mx:Binding source="parseInt(txtSelectedValue.text)" destination="cboTree.selectedValue"/>
+	
+	
+	<mx:Script>
+		<![CDATA[
+			
+			import mx.collections.ArrayCollection;
+			
+			[Bindable]
+			var dsTest:ArrayCollection = new ArrayCollection([
+				{Id: 0, DescriptionText: "-"},
+				{Id: 1, DescriptionText:"Fruits", children: new ArrayCollection([
+					{Id: 2, DescriptionText: "Apple"},
+					{Id: 3, DescriptionText: "Orange"},
+					{Id: 4, DescriptionText: "Kiwi"},
+					{Id: 5, DescriptionText: "Pineapple"}
+				])},
+				{Id: 6, DescriptionText:"Animals", children: new ArrayCollection([
+					{Id: 7, DescriptionText: "Monkey"},
+					{Id: 8, DescriptionText: "Cat"},
+					{Id: 9, DescriptionText: "Fish"},
+					{Id: 10, DescriptionText: "Dog"}
+				])}
+			]);
+		
+		]]>
+	</mx:Script>
+	
+	<components:TreeComboBox id="cboTree" width="170" labelField="DescriptionText" valueField="Id" x="100" y="100" dataProvider="{dsTest}" parentsSelectable="false"/>
+	
+	<mx:TextInput x="100" y="150" id="txtSelectedValue"/>
+		
+</mx:Application>
